@@ -1,0 +1,138 @@
+---
+title: "Gp"
+author: "Sai Supriya"
+date: '2022-11-07'
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Given that the Research and Development Division of the Emax Corporation has developed three new
+
+products. A decision now needs to be made on which mix of these products should be produced.
+
+Management wants primary consideration given to three factors: total profit, stability in the
+
+workforce, and achieving an increase in the company's earnings next year from the \$75 million
+
+achieved this year.
+
+#importing libraries
+
+```{r}
+library(lpSolve)
+
+library(lpSolveAPI)
+
+library(goalprog)
+```
+
+##objective function
+
+Maximize Z = P - 6C - 3D, where
+
+P = total (discounted) profit over the life of the new products,
+
+C = change (in either direction) in the current level of employment,
+
+D = decrease (if any) in next year's earnings from the current year's level.
+
+There is given that C = change (in either direction) in the current level of employment, where the y1m, y1p are taken as increase or decrease in value of deviation.
+
+As -6y1m, -6y1p
+
+##The decrease in next year's earnings from the current year's level suggests the value to be y2m as it is -3y2m
+
+\##(Tabulation)The data given is expressed in the tabular form
+
+```{r}
+Goal<- matrix(c("Total Profit", "Employment Level", "Earnings Next Year",
+
+                       20,6,8,
+
+                       15,4,7,
+
+                       25,5,5,
+
+                       "Maximize","=50",">=75",
+
+                       "Millions of Dollars", "Hundreds of Employees", "Millions of Dollars"), ncol=6, byrow = F)
+
+colnames(Goal) <- c("Factor","Product 1", "Product 2", "Product 3", "Goal", "Units")
+
+as.table(Goal)
+
+```
+
+```{r}
+Goal <-read.lp("Downloads/goal set obj.lp")
+
+Goal
+
+```
+
+#goal programming model
+
+```{r}
+solve(Goal)
+```
+
+*the return value of 0 indicates that the model was successfully solved.*
+
+Remarks:
+
+Obtaining results as x1 =0,
+
+x2 =0 , x3=15 which is product 3
+
+Applying the simplex method to this formulation yields an optimal solution of y1m = 0, y1p = 25, y2m = 0, y2p = 0, x1 = 0, x2 = 0, x3 = 15 , y1m = 0, y2m = 0. Note that the solution is given in the order in which the variables appear in the formulation. This implies that y1m = 0 and y2p = 0, so the first and third goals are fully satisfied, but the employment goal is decreased by 15 units.
+
+#-objective
+
+```{r}
+get.objective(Goal)
+
+
+
+```
+
+#-variable value
+
+```{r}
+get.variables(Goal)
+
+```
+
+#interpretation
+
+Goal programming requires establishing goals for all objectives. What if some objectives were open ended?
+
+\* In open-ended objectives, there is no minimum (standard) goal. As such, we want to make progress on all objectives simultaneously.
+
+\* Thus, the appropriate objective is to maximize the minimum progress toward all objectives.
+
+\## Findings
+
+1). There are X1, X2, X3 are the units of combination which maximize the objective function. X1=Product1, X2=Product2, X3=Product3
+
+But there is a change to X3. Product 3 is the only product which the firm can produce i.e. 15 Units of Product 3 to thereby maximize the profit.
+
+2)Note that the solution is given in the order in which the variables appear in the formulation. This implies that y1m = 0 and y2p = 0, so the first and third goals are fully satisfied, but the product 3 is decreased by 15 units.
+
+3. So,the goal was to attain an equilibrium in the employment level greater than 50 Hundred Employees.(Employee level\>50)
+
+but here in this case the firm exceeded the employment levels 25 Hundred Employees for penalised for the excess/rise in the employees count.
+
+4)The goal of y2p and y2m was to see the deviation either in positive or negetive in the next years earnings from the current level.
+
+This solution is exactly as what we achieved. First priority goals are met, and the optimal solution falls short of the second-priority goals with respect to Employment.
+
+##Conclusion:
+
+We found that the objective of profit that the firm maximizing is 225 Million Dollars.
